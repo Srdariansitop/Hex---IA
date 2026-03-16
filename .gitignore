@@ -1,0 +1,9 @@
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+board.py
+main.py
+minimax.py
+montecarlo.py
+player.py
