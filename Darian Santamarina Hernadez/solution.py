@@ -346,20 +346,39 @@ class MasterPlayer(Player):
         return self._check_winner_fast(state, size)
 
     def _check_winner_fast(self, state, size):
-        queue = deque()
-        for r in range(size):
-            if state[r][0] == 1:
-                queue.append((r, 0))
-                state[r][0] = 3 
-        
-        while queue:
-            r, c = queue.popleft()
-            if c == size - 1: 
-                return 1
-            
-            for nr, nc in self.neighbors_cache[(r, c)]:
-                if state[nr][nc] == 1:
-                    state[nr][nc] = 3 
-                    queue.append((nr, nc))
-                    
-        return 2
+    # --- Verificar Jugador 1 (Izquierda → Derecha) ---
+     queue = deque()
+     visited = set()
+     for r in range(size):
+        if state[r][0] == 1:
+            queue.append((r, 0))
+            visited.add((r, 0))
+    
+     while queue:
+        r, c = queue.popleft()
+        if c == size - 1:
+            return 1
+        for nr, nc in self.neighbors_cache[(r, c)]:
+            if state[nr][nc] == 1 and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                queue.append((nr, nc))
+
+     # --- Verificar Jugador 2 (Arriba → Abajo) ---
+     queue = deque()
+     visited = set()
+     for c in range(size):
+        if state[0][c] == 2:
+            queue.append((0, c))
+            visited.add((0, c))
+    
+     while queue:
+        r, c = queue.popleft()
+        if r == size - 1:
+            return 2
+        for nr, nc in self.neighbors_cache[(r, c)]:
+            if state[nr][nc] == 2 and (nr, nc) not in visited:
+                visited.add((nr, nc))
+                queue.append((nr, nc))
+
+    # --- Ningún ganador ---
+     return 0
